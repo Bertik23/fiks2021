@@ -1,6 +1,7 @@
 from copy import deepcopy
 # from multiprocessing import Pool
 
+
 class NotDAP(BaseException):
     pass
 
@@ -12,7 +13,6 @@ class Graph:
         self.edges = self.getEdges(inDict)
         self.tempMarks = []
         self.permMarks = []
-
 
     @classmethod
     def getNodes(self, inDict: dict):
@@ -61,6 +61,7 @@ class Graph:
 
     def topoSort2(self):
         sortedNodes = []
+
         def visit(n):
             if n in self.permMarks:
                 return
@@ -81,7 +82,6 @@ class Graph:
         self.permMarks = []
         return sortedNodes
 
-    
     def getGraphFromStartNode(self, startNode):
         d = {}
         nodes = [startNode]
@@ -96,7 +96,6 @@ class Graph:
             except IndexError:
                 continue
         return d
-
 
     def __getitem__(self, key):
         if type(key) == tuple:
