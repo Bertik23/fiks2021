@@ -1,7 +1,9 @@
-VISUALISE = True
+VISUALISE = False
+FROM_FILE = False
 
 
 def findPath(graph, start, end):
+    """Returns if path from `start` to `end` exists"""
     visited = set()
     queue = [start]
     for q in queue:
@@ -14,10 +16,19 @@ def findPath(graph, start, end):
     return False
 
 
-with open("2-5-prohlidkove-okruhy.vstup", encoding="utf-8") as f:
-    inputString = f.read()
-
-inputString = inputString.split("\n")
+if FROM_FILE:
+    with open("2-5-prohlidkove-okruhy.vstup", encoding="utf-8") as f:
+        inputString = f.read()
+    inputString = inputString.split("\n")
+else:
+    inputString = []
+    # Možná se stane, při používání pipe, že tohle hodí EOFError,
+    # upřímě nemám tušení, proč se to děje, ale přidat další prázdný
+    # řádek na konec vstupního souboru a fixne se to
+    # Při načítání přímo ze souboru ani při ručním zadávání se to neděje
+    # Testováno na Windows, takže na Linuxu to možná pojede na pohodu
+    while inputStr := input():
+        inputString.append(inputStr)
 
 with open(
     "2-5-prohlidkove-okruhy.out",
@@ -32,7 +43,6 @@ with open(
     inputString = inputString[1:]
     graph = {lI: [] for lI in range(1, numOfNodes+1)}
 
-    print(graph)
     for eI in range(numOfEdges):
         a, b = map(int, inputString[eI].split(" "))
         graph[a].append(b)
@@ -44,8 +54,6 @@ with open(
         a, b = map(int, inputString[qI].split(" "))
         questions.append((a, b))
 
-    print(graph)
-
     if VISUALISE:
         from pyvis.network import Network
         net = Network()
@@ -54,8 +62,6 @@ with open(
         for start, targets in graph.items():
             for end in targets:
                 edges.append((start, end))
-
-        print(edges)
 
         net.add_nodes(graph.keys())
         for edge in edges:
