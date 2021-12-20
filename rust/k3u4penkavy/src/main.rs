@@ -47,6 +47,7 @@ fn line_vec_to_u8(line_vec: &[u8]) -> u8{
     return out;
 }
 
+#[allow(unused)]
 fn line_vec_to_u128(line_vec: &[u8]) -> u128{
     let out: u128 = String::from_utf8_lossy(&line_vec).parse().unwrap();
     return out;
@@ -59,6 +60,10 @@ fn line_vec_to<T>(line_vec: &[u8]) -> T
 {
         let out: T = String::from_utf8_lossy(&line_vec).parse::<T>().unwrap();
         return out;
+}
+
+fn is_within_levenshtein_distance(a: &String, b: &String, k: u8) -> bool{
+    return true
 }
 
 fn main() {
@@ -82,7 +87,7 @@ fn main() {
     byte_pointer += 1;
 
     let num_of_problems: u8 = String::from_utf8_lossy(&line_vec).parse().unwrap();
-    println!("{}", num_of_problems);
+    // println!("{}", num_of_problems);
 
     for problem_n in 0..num_of_problems{
         println!("Problem {}/{}", problem_n, num_of_problems);
@@ -94,12 +99,15 @@ fn main() {
         byte_pointer += 1;
         let num_of_birds: u8 = String::from_utf8_lossy(&line_vec).parse().unwrap();
 
-        let bird_genomes: [str, num_of_birds];
+        let mut bird_genomes: Vec<String> = Vec::new();
+        // let mut bird_same_species = HashMap::new();
+        // bird_same_species.insert(0, vec![]);
 
-        println!("{}", byte_pointer);
+        
+        // println!("{}", byte_pointer);
         line_vec = bytes_until(&input_bytes, 10, &mut byte_pointer);
         let _max_genome_difference = line_vec_to_u8(&line_vec);
-        println!("{} {:?} {}", byte_pointer, line_vec, _max_genome_difference);
+        // println!("{} {:?} {}", byte_pointer, line_vec, _max_genome_difference);
         for bird_n in 0..num_of_birds{
             println!("Bird {}/{}", bird_n+1, num_of_birds);
             line_vec = bytes_until(&input_bytes, 32, &mut byte_pointer);
@@ -108,9 +116,10 @@ fn main() {
             let u8_bases = n_bytes(&input_bytes, num_of_bytes, &mut byte_pointer);
             let binary_vec: String = u8_bases.into_iter().map(|i| zfill(format!("{:b}", i), 8 as usize)).collect();
             let binary_bases = &binary_vec[0..(num_of_bases*2) as usize];
-            println!("{:?}", binary_vec);
+            // println!("{:?}", binary_vec);
             let bases_str = bin_str_to_bases(&bases_map, binary_bases);
-            println!("{:?}", bases_str)
+            println!("{:?}", bases_str);
+            bird_genomes.push(bases_str);
         }
     }
 }
