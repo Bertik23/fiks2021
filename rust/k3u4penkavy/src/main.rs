@@ -66,6 +66,23 @@ fn is_within_levenshtein_distance(a: &String, b: &String, k: u8) -> bool{
     return true
 }
 
+fn levenshtein_distance(a: &String, b: &String) -> u32{
+    if b.Lenght == 0{
+        return a.len();
+    }
+    if a.Lenght == 0{
+        return b.len();
+    }
+    if a[0] == b[0]{
+        return levenshtein_distance(a[1..a.len()], b[1..b.len()]);
+    }
+    return 1 + min(
+        levenshtein_distance(a, &String::from(b[1..b.len()])),
+        levenshtein_distance(a[1..a.len()], b),
+        levenshtein_distance(a[1..a.len()], b[1..b.len()])
+    )
+}
+
 fn main() {
     let bases_map: HashMap<String, &str> = HashMap::from([
         (String::from("00"), "A"),
@@ -121,5 +138,6 @@ fn main() {
             println!("{:?}", bases_str);
             bird_genomes.push(bases_str);
         }
+        dbg!(levenshtein_distance(bird_genomes[0], bird_genomes[1]);
     }
 }
