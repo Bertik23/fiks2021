@@ -28,23 +28,25 @@ fn main() {
             }
         }
         let mut positions: i64 = (t_0+1)*(t_0+1);
-        let mut a = max(0, 2*(t_0-(h-y))+1);
-        let mut b = max(0, 2*(t_0-(w-x))+1);
-        let mut c = max(0, 2*(t_0-(x+1))+1);
-        let mut d = max(0, 2*(t_0-(y+1))+1);
-        while a > 0 || b > 0 || c > 0 || d > 0{
-            positions -= a + b + c + d;
-            positions += max(0, t_0-(h-y+w-x)+1);
-            positions += max(0, t_0-(w-x+y+1)+1);
-            positions += max(0, t_0-(h-y+x+1)+1);
-            positions += max(0, t_0-(y+1+x+1)+1);
-            t_0 -= 2;
-            a = max(0, 2*(t_0-(h-y))+1);
-            b = max(0, 2*(t_0-(w-x))+1);
-            c = max(0, 2*(t_0-(x+1))+1);
-            d = max(0, 2*(t_0-(y+1))+1);
-            // println!("Intermediate positions {}", positions)
-        }
+        let a = max(0, 2*(t_0-(h-y))+1);
+        let b = max(0, 2*(t_0-(w-x))+1);
+        let c = max(0, 2*(t_0-(x+1))+1);
+        let d = max(0, 2*(t_0-(y+1))+1);
+        let e = max(0, t_0-(h-y+w-x)+1);
+        let f = max(0, t_0-(w-x+y+1)+1);
+        let g = max(0, t_0-(h-y+x+1)+1);
+        let h = max(0, t_0-(y+1+x+1)+1);
+
+        positions -= ((a as f64/4.0).ceil()*a as f64 + 0.5*(a as f64/4.0).ceil()*((a as f64/4.0).ceil()-1.0)*(-4.0)) as i64;
+        positions -= ((b as f64/4.0).ceil()*b as f64 + 0.5*(b as f64/4.0).ceil()*((b as f64/4.0).ceil()-1.0)*(-4.0)) as i64;
+        positions -= ((c as f64/4.0).ceil()*c as f64 + 0.5*(c as f64/4.0).ceil()*((c as f64/4.0).ceil()-1.0)*(-4.0)) as i64;
+        positions -= ((d as f64/4.0).ceil()*d as f64 + 0.5*(d as f64/4.0).ceil()*((d as f64/4.0).ceil()-1.0)*(-4.0)) as i64;
+
+        positions += ((e as f64/2.0).ceil()*e as f64 + 0.5*(e as f64/2.0).ceil()*((e as f64/2.0).ceil()-1.0)*(-2.0)) as i64;
+        positions += ((f as f64/2.0).ceil()*f as f64 + 0.5*(f as f64/2.0).ceil()*((f as f64/2.0).ceil()-1.0)*(-2.0)) as i64;
+        positions += ((g as f64/2.0).ceil()*g as f64 + 0.5*(g as f64/2.0).ceil()*((g as f64/2.0).ceil()-1.0)*(-2.0)) as i64;
+        positions += ((h as f64/2.0).ceil()*h as f64 + 0.5*(h as f64/2.0).ceil()*((h as f64/2.0).ceil()-1.0)*(-2.0)) as i64;
+
         println!("{}", positions);
         println!("Problem done in: {} μs", start.elapsed().as_micros())
     }
