@@ -8,9 +8,9 @@ fn main() {
     let num_of_problems: u8 = line.replace("\r\n", "").replace("\n", "").parse().unwrap();
 
     // println!("{}", num_of_problems);
-    for problem_n in 0..num_of_problems{
-        println!("Problem {}/{}", problem_n+1, num_of_problems);
-        let start = Instant::now();
+    for _problem_n in 0..num_of_problems{
+        // println!("Problem {}/{}", problem_n+1, num_of_problems);
+        // let start = Instant::now();
         let mut line = String::new();
         _b1 = std::io::stdin().read_line(&mut line);
         let input = line.split(" ").collect::<Vec<&str>>();
@@ -48,7 +48,7 @@ fn main() {
         positions += ((h as f64/2.0).ceil()*h as f64 + 0.5*(h as f64/2.0).ceil()*((h as f64/2.0).ceil()-1.0)*(-2.0)) as i64;
 
         println!("{}", positions);
-        println!("Problem done in: {} μs", start.elapsed().as_micros())
+        // println!("Problem done in: {} μs", start.elapsed().as_micros())
     }
     println!("Main done in: {} μs", start_main.elapsed().as_micros())
 }
