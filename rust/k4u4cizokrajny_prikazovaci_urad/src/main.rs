@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+
 fn zfill(in_string: String, length: usize) -> String{
     let mut out_string = String::from(in_string);
     while out_string.len() < length{
@@ -60,7 +61,7 @@ impl Process{
                 main_memory[load_pc] = instruction;
             }
             let parsed = parse_instruction(instruction).unwrap_or_default();
-            eprintln!("{} {}", parsed.1, parsed.2);
+            // eprintln!("{} {}", parsed.1, parsed.2);
             load_pc += 1;
             load_pc = load_pc % 256;
         }
@@ -86,7 +87,10 @@ impl Process{
         //     self.pc
         //     //main_memory
         // );
-        if instruction_str == "PC"{
+        // println!("{:?}", (self.pc, _instruction, &instruction_str, &argument));
+        if instruction_str == "NOP"{
+        }
+        else if instruction_str == "PC"{
             self.stack.push(self.pc as u32);
         } else if instruction_str == "PUSH"{
             self.stack.push(argument);
@@ -104,6 +108,9 @@ impl Process{
             self.stack.push(a.unwrap());
             self.stack.push(b.unwrap());
         } else if instruction_str == "DUP"{
+            if self.stack.last() == None{
+                return false
+            }
             self.stack.push(*self.stack.last().unwrap());
         } else if instruction_str == "PUSHSSZ"{
             self.stack.push(self.stack.len() as u32);
@@ -112,28 +119,28 @@ impl Process{
             if a == None || a.unwrap() == 666{
                 return false
             }
-            self.stack.push(main_memory[a.unwrap() as usize]);
+            self.stack.push(main_memory[(a.unwrap() % 256) as usize]);
         } else if instruction_str == "STORE"{
             let a = self.stack.pop();
             let b = self.stack.pop();
             if a == None || b == None || a.unwrap() == 666{
                 return false
             }
-            main_memory[a.unwrap() as usize] = b.unwrap();
+            main_memory[(a.unwrap() % 256) as usize] = b.unwrap();
         } else if instruction_str == "ADD"{
             let a = self.stack.pop();
             let b = self.stack.pop();
             if a == None || b == None{
                 return false
             }
-            self.stack.push(a.unwrap() + b.unwrap());
+            self.stack.push(a.unwrap().wrapping_add(b.unwrap()));
         } else if instruction_str == "SUB"{
             let a = self.stack.pop();
             let b = self.stack.pop();
             if a == None || b == None{
                 return false
             }
-            self.stack.push(a.unwrap() - b.unwrap());
+            self.stack.push(a.unwrap().wrapping_sub(b.unwrap()));
         } else if instruction_str == "DIV"{
             let a = self.stack.pop();
             let b = self.stack.pop();
@@ -143,14 +150,14 @@ impl Process{
             if b.unwrap() == 0{
                 return false
             }
-            self.stack.push(a.unwrap() / b.unwrap());
+            self.stack.push(a.unwrap().wrapping_div(b.unwrap()));
         } else if instruction_str == "POW"{
             let a = self.stack.pop();
             let b = self.stack.pop();
             if a == None || b == None{
                 return false
             }
-            self.stack.push(a.unwrap().pow(b.unwrap()));
+            self.stack.push(a.unwrap().wrapping_pow(b.unwrap()));
         } else if instruction_str == "BRZ"{
             let a = self.stack.pop();
             if a == None{
@@ -194,10 +201,18 @@ impl Process{
             todo!()
         } else if instruction_str == "JNTAR"{
             for i in 1..=3{
-                main_memory[self.pc + 2usize.pow(i)] = 19;
-                main_memory[self.pc - 2usize.pow(i)] = 19;
+                let a = self.pc.wrapping_add(2usize.pow(i));
+                let b = self.pc.wrapping_sub(2usize.pow(i));
+                if a == 666 || b == 666 {
+                    return false
+                }
+                main_memory[a % 256] = 19;
+                main_memory[b % 256] = 19;
             }
         } else {
+            return false
+        }
+        if self.stack.len() > 16{
             return false
         }
         self.pc += 1;
@@ -214,7 +229,7 @@ fn main() {
     for _problem_n in 0..num_of_problems{
         line.clear();
         _b1 = std::io::stdin().read_line(&mut line);
-        eprintln!("Line: {}\nBytes: {:?}", line, line.as_bytes());
+        // eprintln!("Line: {}\nBytes: {:?}", line, line.as_bytes());
         let num_of_processes: u8 = line.trim().parse().unwrap();
         let mut processes = vec![];
         let mut main_memory: [u32; 256] = [0u32; 256];
