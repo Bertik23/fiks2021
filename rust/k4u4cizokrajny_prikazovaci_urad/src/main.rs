@@ -233,13 +233,7 @@ fn main() {
     let mut _b1 = std::io::stdin().read_line(&mut line);
     let num_of_problems: u16 = line.trim().parse().unwrap();
     let mut instructions_hashset: HashSet<String> = HashSet::new();
-    for problem_n in 0..num_of_problems{
-        if problem_n == 382{
-            eprintln!("{:?}", instructions_hashset)
-        }
-        if problem_n == 490{
-            eprintln!("{:?}", instructions_hashset)
-        }
+    for _problem_n in 0..num_of_problems{
         line.clear();
         _b1 = std::io::stdin().read_line(&mut line);
         // eprintln!("Line: {}\nBytes: {:?}", line, line.as_bytes());
@@ -254,8 +248,8 @@ fn main() {
         }
         let mut waiting_for_tp = vec![];
         for _c in 0..5000{
+            waiting_for_tp.clear();
             for p in 0..processes.len(){
-                waiting_for_tp.clear();
                 if !processes[p].alive{
                     continue
                 }
@@ -265,17 +259,17 @@ fn main() {
                 if processes[p].waiting_for_tp{
                     waiting_for_tp.push(p);
                 }
-                if waiting_for_tp.len() >= 2{
-                    let first = processes[waiting_for_tp[0]].pc;
-                    for (i, pj) in waiting_for_tp.iter().enumerate(){
-                        if i+1 < waiting_for_tp.len(){
-                            processes[*pj].pc = processes[waiting_for_tp[i+1]].pc + 1;
-                        } else {
-                            processes[*pj].pc = first + 1;
-                        }
-                        processes[*pj].pc = processes[*pj].pc % 256;
-                        processes[*pj].waiting_for_tp = false;
+            }
+            if waiting_for_tp.len() >= 2{
+                let first = processes[waiting_for_tp[0]].pc;
+                for (i, pj) in waiting_for_tp.iter().enumerate(){
+                    if i+1 < waiting_for_tp.len(){
+                        processes[*pj].pc = processes[waiting_for_tp[i+1]].pc + 1;
+                    } else {
+                        processes[*pj].pc = first + 1;
                     }
+                    processes[*pj].pc = processes[*pj].pc % 256;
+                    processes[*pj].waiting_for_tp = false;
                 }
             }
         }
