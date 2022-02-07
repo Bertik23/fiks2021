@@ -41,7 +41,7 @@ fn parse_instruction(instruction_argument: u32) -> Option<(u8, String, u32)>{
         return None
     }
     // println!("{:?} bytes: {:?}, string: {}", bin_inst, &bin_inst.as_bytes()[0..24], &String::from_utf8_lossy(&bin_inst.as_bytes()[0..24]));
-    let argument = u32::from_str_radix(&String::from_utf8_lossy(&bin_inst.as_bytes()[0..24]), 2).unwrap();
+    let argument = u32::from_str_radix(&String::from_utf8_lossy(&bin_inst.as_bytes()[8..24]), 2).unwrap();
     return Some((instruction, instruction_str.unwrap().to_string(), argument))
 }
 
@@ -131,7 +131,9 @@ impl Process{
             if a == None || b == None || a.unwrap() == 666{
                 return false
             }
-            main_memory[(a.unwrap() % 256) as usize] = b.unwrap();
+            if a.unwrap() % 256 != 0{
+                main_memory[(a.unwrap() % 256) as usize] = b.unwrap();
+            }
         } else if instruction_str == "ADD"{
             let a = self.stack.pop();
             let b = self.stack.pop();
@@ -201,7 +203,10 @@ impl Process{
         } else if instruction_str == "ARMED_BOMB"{
             return false;
         } else if instruction_str == "BOMB"{
-            main_memory[self.pc] -= 1;
+            if self.pc != 0 {
+                //main_memory[self.pc] -= 1;
+                main_memory[self.pc] = 0x12;
+            }
         } else if instruction_str == "TLPORT"{
             self.waiting_for_tp = true;
             return true
@@ -212,8 +217,12 @@ impl Process{
                 if a == 666 || b == 666 {
                     return false
                 }
-                main_memory[a % 256] = 19;
-                main_memory[b % 256] = 19;
+                if a % 256 != 0{
+                    main_memory[a % 256] = 19;
+                }
+                if b % 256 != 0{
+                    main_memory[b % 256] = 19;
+                }
             }
         } else {
             return false
