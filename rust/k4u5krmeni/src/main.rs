@@ -1,4 +1,5 @@
 use std::collections::{HashMap, HashSet};
+use std::time::Instant;
 
 fn get_distances(current_node: u32, graph: &HashMap<u32, Vec<u32>>, visited_nodes: Vec<u32>, distances: &mut HashMap<u32,HashMap<u32,u32>>){
     //println!("{:?}", visited_nodes);
@@ -66,6 +67,7 @@ fn get_optimal_meeting_point(points: Vec<u32>, graph: &HashMap<u32, Vec<u32>>, i
 }
 
 fn main() {
+    let start_main = Instant::now();
     let mut line = String::new();
     let mut _b1 = std::io::stdin().read_line(&mut line);
     let line_vec = line.split(" ").map(|a| a.trim().parse::<u32>().unwrap()).collect::<Vec<u32>>();
@@ -76,6 +78,7 @@ fn main() {
     let mut road_graph: HashMap<u32,Vec<u32>> = HashMap::new();
     let mut inverse_road_graph: HashMap<u32,u32> = HashMap::new();
     let mut road_distances: HashMap<u32,HashMap<u32,u32>> = HashMap::new();
+    let start_prep = Instant::now();
     for _ in 0..num_of_countries-1{
         line.clear();
         _b1 = std::io::stdin().read_line(&mut line);
@@ -123,9 +126,12 @@ fn main() {
 
     //dbg!(&road_graph);
     get_distances(1, &road_graph, vec![], &mut road_distances);
+    let end_prep = Instant::now();
+    let mut query_times = vec![];
     //dbg!(&road_distances);
     //dbg!(&inverse_road_graph);
     for _ in 0..num_of_days{
+        let start_query = Instant::now();
         line.clear();
         _b1 = std::io::stdin().read_line(&mut line);
         let line_vec = line.split(" ").map(|a| a.trim().parse::<u32>().unwrap()).collect::<Vec<u32>>();
@@ -134,7 +140,15 @@ fn main() {
         let optimal_meeting_point = get_optimal_meeting_point(line_vec[1..].to_vec(), &road_graph, &inverse_road_graph, &mut road_distances);
         //dbg!(&road_distances[&2]);
         //println!("{} {} {}", cost, optimal_meeting_point, line_vec[1..].iter().map(|x| find_distance(optimal_meeting_point, *x, &road_graph, &inverse_road_graph, &mut road_distances)).sum::<u32>());
-        println!("{}", cost - line_vec[1..].iter().map(|x| find_distance(optimal_meeting_point, *x, &road_graph, &inverse_road_graph, &mut road_distances)).sum::<u32>());
+        // println!("{}", cost - line_vec[1..].iter().map(|x| find_distance(optimal_meeting_point, *x, &road_graph, &inverse_road_graph, &mut road_distances)).sum::<u32>());
         //dbg!(&road_distances);
+        query_times.push((Instant::now() - start_query).as_micros());
     }
+    println!("{:?}", query_times);
+    println!(
+        "Main: {} μs\n\tPrep: {} μs\n\tAvg. query: {} μs",
+        (Instant::now()-start_main).as_micros(),
+        (end_prep-start_prep).as_micros(),
+        query_times.iter().sum::<u128>() / num_of_days as u128
+    )
 }
