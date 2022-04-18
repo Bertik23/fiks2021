@@ -4,7 +4,7 @@
 Kromě zmíněné replay attack má ukázkový protokol i jiné problémy.
 * Odeslaná zpráva je stejně dlouhá jako zdrojová zpráva, a protože má každá možná zpráva jinou délku, tak se dá jedoduše určit, podle počtu znaků, o jakou zprávu se jedná.
 * Stejným způsobem můžeme odhadnou argument zprávy `POSLETE MI`, podle délky můžeme odhadnou řádovou velikost.
-* Pokud bude nějaká zpráva zadržena, tak se ani jedna strana nedozví o tom, že se zpráva někam ztratila. A pokud dorazí v jiném pořadí, tak se o tom také nedozví.
+* Pokud bude nějaká zpráva zadržena, tak se ani jedna strana nedozví o tom, že se zpráva někam ztratila, nebo s ní bylo manipulováno. A pokud dorazí v jiném pořadí, tak se o tom také nedozví.
 
 ## Návrh protokolu
 ### Struktura zprávy
@@ -39,7 +39,7 @@ Hash je určen pro ověření zprávy, pokud se hash přijaté zprávy bude liš
 Zpráva je odesílana zašifrovaná klíčem, který si tučňáci dohodli před misí.
 
 ### Strategie
-Před misí si tučňáci dohodnou klíč, kterým budou šifrovat zprávy. A timeout pro přijetí zprávy.
+Před misí si tučňáci dohodnou klíč, kterým budou šifrovat zprávy, a timeout pro přijetí zprávy.
 
 Dále funguje komunikace následovně:
 Stanoviště `A` odešle zprávu s číslem $C$ a po přijetí stanovištěm `B` odešle stanoviště `B` zprávu s obsahem $Z$
@@ -52,3 +52,5 @@ $$
 Pokud bude $C$ o více než jedna větší než počítadlo přijatých zpráv (některé zprávy ještě nedorazily), tak tučňáci vyčkají dohodnutý timeout a pokud během něj zpráva nedorazí, tak odešlou zprávu s obsahem $Z = C\text{ - NEDORAZILA}$
 
 Na tyto stavové zprávy se neodpovídá, jinak by se z toho stal nekonečný kruh.
+
+Samozřejmě tu narážíme na problém dvou generálů. Ten je ale za nás vyřešen. Vzhledem k tomu, že $A \to B$ projde vždy a bez změny, pouze $B \to A$ se může ztratit, tak $A$ si je jisté, že $B$ dostalo všechny zprávy a $B$ zároveň ví o statusu všech zpráv. Proto by $B$ ani nemuselo odesílat status zprávy, ale protokol je pak přehlednější, protože obě strany dělají to samé.
